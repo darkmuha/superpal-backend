@@ -21,7 +21,7 @@ class Customer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     first_name = models.CharField(max_length=40)
     last_name = models.CharField(max_length=40)
-    sex = models.CharField(choices=SexType.choices)
+    sex = models.TextField(choices=SexType.choices)
     profile_picture = models.CharField(max_length=255, null=True, blank=True)
     weight = models.DecimalField(max_digits=3, decimal_places=2)
     height = models.DecimalField(max_digits=3, decimal_places=2)
@@ -34,8 +34,10 @@ class Customer(models.Model):
     workout_selected = models.ForeignKey(Workout, on_delete=models.SET_NULL, null=True)
     workout_streak = models.IntegerField(default=0)
     workout_intensity = models.TextField(choices=Intensity.choices)
-    workout_difficulty = models.CharField(choices=Difficulty.choices)
+    workout_difficulty = models.TextField(choices=Difficulty.choices)
     rank = models.IntegerField(choices=Rank.choices, default=Rank.WARRIOR)
+    current_gym = models.CharField(max_length=40)
+    current_location = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

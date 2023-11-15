@@ -23,7 +23,7 @@ class Rank(models.TextChoices):
     GUARDIAN = 2, "Guardian"
     DEFENDER = 3, "Defender"
     PALADIN = 4, "Paladin"
-    MODEL = 5, "MODEL"
+    MODEL = 5, "Model"
     EXEMPLAR = 6, "Exemplar"
     RESCUER = 7, "Rescuer"
     CHAMPION = 8, "Champion"
