@@ -15,7 +15,7 @@ class Difficulty(models.TextChoices):
 class Intensity(models.TextChoices):
     LOW = "Low"
     MEDIUM = "Medium"
-    HIGH = "HIGH"
+    HIGH = "High"
 
 
 class Rank(models.TextChoices):
