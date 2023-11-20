@@ -9,6 +9,7 @@ class Training(models.Model):
     video = models.CharField(max_length=255)
     repetitions = models.PositiveIntegerField()
     sets = models.PositiveIntegerField()
+    rest_between_sets: models.PositiveIntegerField()
 
     def __str__(self):
         return f"Training {self.id}: Reps={self.repetitions}, Sets={self.sets}"
