@@ -16,7 +16,7 @@ def training_list(request):
     if request.method == 'GET':
         trainings = Training.objects.all()
 
-        serializer = TrainingSerializer(trainings, many=True)
+        serializer = TrainingSerializer(instance=trainings, many=True)
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
@@ -38,7 +38,7 @@ def training_detail(request, training_id):
 
     training = get_object_or_404(Training, pk=training_id)
     if request.method == 'GET':
-        serializer = TrainingSerializer(training)
+        serializer = TrainingSerializer(instance=training)
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 

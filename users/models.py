@@ -23,11 +23,11 @@ class Customer(models.Model):
     last_name = models.CharField(max_length=40)
     sex = models.TextField(choices=SexType.choices)
     profile_picture = models.CharField(max_length=255, null=True, blank=True)
-    weight = models.DecimalField(max_digits=3, decimal_places=2)
-    height = models.DecimalField(max_digits=3, decimal_places=2)
+    weight = models.DecimalField(max_digits=5, decimal_places=2)
+    height = models.DecimalField(max_digits=5, decimal_places=2)
     age = models.PositiveIntegerField(
         validators=[
-            MaxValueValidator(200),
+            MaxValueValidator(100),
             MinValueValidator(0),
         ]
     )
@@ -38,6 +38,7 @@ class Customer(models.Model):
     rank = models.IntegerField(choices=Rank.choices, default=Rank.WARRIOR)
     current_gym = models.CharField(max_length=40)
     current_location = models.CharField(max_length=100)
+    last_updated = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

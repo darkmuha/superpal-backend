@@ -42,7 +42,7 @@ def workout_detail(request, workout_id):
     workout = get_object_or_404(Workout, pk=workout_id)
 
     if request.method == 'GET':
-        serializer = WorkoutSerializer(workout)
+        serializer = WorkoutSerializer(instance=workout)
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
