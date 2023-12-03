@@ -18,7 +18,8 @@ class User(AbstractUser):
 
 
 class Customer(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=40)
     last_name = models.CharField(max_length=40)
     sex = models.TextField(choices=SexType.choices)

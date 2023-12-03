@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 
-from .models import Customer, User
+from .models import Customer
 from .serializers import CustomerSerializer, UserSerializer
 
 
@@ -11,7 +11,7 @@ from .serializers import CustomerSerializer, UserSerializer
 @api_view(['GET', 'POST'])
 def customer_list(request):
     """
-    List all customers(Temporary) or create a new customer.
+    List all customers(Temporary)
     """
     if request.method == 'GET':
         customers = Customer.objects.all()
@@ -19,14 +19,6 @@ def customer_list(request):
         serializer = CustomerSerializer(instance=customers, many=True)
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
-    elif request.method == 'POST':
-        serializer = CustomerSerializer(data=request.data)
-
-        if serializer.is_valid():
-            serializer.save()
-
-            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
-        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
@@ -54,3 +46,18 @@ def customer_detail(request, customer_id):
         customer.delete()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['POST'])
+def create_admin(request):
+    if request.method == 'POST':
+        data = request.data
+        data['is_admin'] = True
+        
+        serializer = UserSerializer(data=data)
+
+        if serializer.is_valid():
+            serializer.save()
+
+            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
