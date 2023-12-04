@@ -37,10 +37,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # Apps
-    'users',
+    'customers',
     'workouts',
     'superpals',
     'trainings',
+    'authentication',
 
     # Third party apps
     'rest_framework',
@@ -105,7 +106,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-AUTH_USER_MODEL = "users.User"
+AUTH_USER_MODEL = "authentication.User"
 
 # CORS_ALLOWED_ORIGINS = []
 CORS_ALLOW_ALL_ORIGINS = True

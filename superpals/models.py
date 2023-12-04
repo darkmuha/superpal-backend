@@ -2,7 +2,7 @@ import uuid
 
 from django.db import models
 
-from users.models import User
+from authentication.models import User
 
 
 class SuperPals(models.Model):

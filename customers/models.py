@@ -1,22 +1,14 @@
 import uuid
 
 from django.db import models
-from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
 
 from utils.enums import SexType, Intensity, Difficulty, Rank
 from workouts.models import Workout, Training
+from authentication.models import User
 
 
 # Create your models here.
-class User(AbstractUser):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    is_admin = models.BooleanField(default=False)
-
-    def __str__(self):
-        return self.username
-
-
 class Customer(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -55,10 +47,10 @@ class Progress(models.Model):
         return f"Progress for {self.user} at {self.taken_at}"
 
 
-class UserTrainingStats(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+class CustomerTrainingStats(models.Model):
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     training = models.ForeignKey(Training, on_delete=models.CASCADE)
     current_weight = models.IntegerField(default=0)
 
     def __str__(self):
-        return f"{self.user}'s training stats for {self.training.name}"
+        return f"{self.customer}'s training stats for {self.training.name}"

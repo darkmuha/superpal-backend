@@ -4,7 +4,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from users.serializers import UserSerializer, CustomerSerializer
+from customers.serializers import CustomerSerializer
+from .serializers import UserSerializer
 from .tokens import create_jwt_pair_for_user
 
 
@@ -57,15 +58,30 @@ def logout_view(request):
     return Response(data="You are not logged in. Refresh token is required", status=status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(['POST'])
+def create_admin(request):
+    if request.method == 'POST':
+        data = request.data
+        data['is_admin'] = True
+
+        serializer = UserSerializer(data=data)
+
+        if serializer.is_valid():
+            serializer.save()
+
+            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 @api_view(['GET'])
 def get_routes(request):
     if request.method == 'GET':
         routes = [
-            'auth/login/',
-            'auth/logout',
-            'auth/register',
-            'auth/token/',
-            'auth/token/refresh'
+            'authentication/login/',
+            'authentication/logout',
+            'authentication/register',
+            'authentication/token/',
+            'authentication/token/refresh'
         ]
 
         return Response(data=routes, status=status.HTTP_200_OK)

@@ -46,18 +46,3 @@ def customer_detail(request, customer_id):
         customer.delete()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-@api_view(['POST'])
-def create_admin(request):
-    if request.method == 'POST':
-        data = request.data
-        data['is_admin'] = True
-        
-        serializer = UserSerializer(data=data)
-
-        if serializer.is_valid():
-            serializer.save()
-
-            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
-        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
