@@ -34,6 +34,12 @@ def customer_detail(request, customer_id):
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
     elif request.method == 'PUT':
+        data = request.data
+
+        if data.get('is_admin', 'false').lower() == 'true':
+            return Response(data="Can't change customer to admin through this route",
+                            status=status.HTTP_400_BAD_REQUEST)
+
         serializer = CustomerSerializer(instance=customer, data=request.data, partial=True)
 
         if serializer.is_valid():

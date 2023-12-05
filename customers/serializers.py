@@ -16,6 +16,7 @@ class CustomerSerializer(serializers.ModelSerializer):
         user_representation = {
             'id': instance.user.id,
             'username': instance.user.username,
+            'email': instance.user.email,
         }
         representation['user'] = user_representation
         return representation
@@ -24,10 +25,11 @@ class CustomerSerializer(serializers.ModelSerializer):
         user_data = validated_data.pop('user')
 
         user_serializer = UserSerializer(data=user_data)
-        if user_serializer.is_valid():
-            user = user_serializer.save()
-        else:
+        
+        if not user_serializer.is_valid():
             raise serializers.ValidationError(user_serializer.errors)
+
+        user = user_serializer.save()
 
         customer = Customer.objects.create(user=user, **validated_data)
         return customer

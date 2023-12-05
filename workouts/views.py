@@ -1,3 +1,4 @@
+from django.http import QueryDict
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -22,11 +23,18 @@ def workout_list(request):
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
     elif request.method == 'POST':
-        trainings = [get_object_or_404(Training, id=training) for training in request.data['trainings']]
+        data = QueryDict(mutable=True)
+        data.update(request.data)
+        trainings_ids = data.pop('trainings', None)
 
-        serializer = WorkoutSerializer(data=request.data)
+        if trainings_ids is None:
+            return Response(data="at least 1 training should be selected", status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = WorkoutSerializer(data=data)
         if serializer.is_valid():
             workout = serializer.save()
+
+            trainings = [get_object_or_404(Training, id=training) for training in trainings_ids]
             workout.trainings.set(trainings)
 
             return Response(data=serializer.data, status=status.HTTP_201_CREATED)
@@ -47,13 +55,18 @@ def workout_detail(request, workout_id):
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
     if request.method == 'PUT':
-        trainings = [get_object_or_404(Training, id=training) for training in request.data['trainings']]
+        data = QueryDict(mutable=True)
+        data.update(request.data)
+        trainings_ids = data.pop('trainings', None)
 
-        serializer = WorkoutSerializer(instance=workout, data=request.data, partial=True)
+        serializer = WorkoutSerializer(instance=workout, data=data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
-            workout.trainings.set(trainings)
+
+            if trainings_ids:
+                trainings = [get_object_or_404(Training, id=training) for training in trainings_ids]
+                workout.trainings.set(trainings)
 
             return Response(data=serializer.data, status=status.HTTP_200_OK)
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
