@@ -25,7 +25,7 @@ class CustomerSerializer(serializers.ModelSerializer):
         user_data = validated_data.pop('user')
 
         user_serializer = UserSerializer(data=user_data)
-        
+
         if not user_serializer.is_valid():
             raise serializers.ValidationError(user_serializer.errors)
 
@@ -33,3 +33,15 @@ class CustomerSerializer(serializers.ModelSerializer):
 
         customer = Customer.objects.create(user=user, **validated_data)
         return customer
+
+    def update(self, instance, validated_data):
+        # Update nested serializer
+        user_data = validated_data.pop('user', {})
+        user_instance = instance.user
+        user_serializer = UserSerializer(instance=user_instance, data=user_data, partial=True)
+        if user_serializer.is_valid():
+            user_serializer.save()
+
+        super().update(instance, validated_data)
+
+        return instance

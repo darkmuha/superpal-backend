@@ -11,7 +11,9 @@ from authentication.models import User
 class CustomerViewsTestCase(TestCase):
     def setUp(self):
         self.client = APIClient()
-        self.user = User.objects.create(email='john.doe@example.com', username='john_doe', password='somePassword123$')
+        self.user = User.objects.create(email='john.doe@example.com', username='john_doe')
+        self.user.set_password('somePassword123$')
+        self.user.save()
         self.customer_data = {
             'user': self.user,
             'first_name': 'John',
@@ -45,7 +47,6 @@ class CustomerViewsTestCase(TestCase):
 
     def test_customer_detail_put(self):
         url = reverse('customer-detail', args=[str(self.customer.id)])
-
         updated_data = {
             'first_name': 'Updated John',
             'last_name': 'Updated Doe',
@@ -56,8 +57,14 @@ class CustomerViewsTestCase(TestCase):
             'workout_difficulty': Difficulty.BEGINNER,
             'current_gym': 'Updated Gym Name',
             'current_location': 'Updated City',
+            'user': {
+                'old_password': 'somePassword123$',
+                'new_password': 'somePassword123$$$$',
+                'retype_new_password': 'somePassword123$$$$',
+                'username': 'HelloThere'
+            }
         }
-        response = self.client.put(url, data=updated_data)
+        response = self.client.put(url, data=updated_data, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.customer.refresh_from_db()
@@ -70,6 +77,7 @@ class CustomerViewsTestCase(TestCase):
         self.assertEqual(self.customer.workout_difficulty, updated_data['workout_difficulty'])
         self.assertEqual(self.customer.current_gym, updated_data['current_gym'])
         self.assertEqual(self.customer.current_location, updated_data['current_location'])
+        self.assertEqual(self.customer.user.username, updated_data['user'].get('username'))
 
     def test_customer_detail_delete(self):
         url = reverse('customer-detail', args=[str(self.customer.id)])

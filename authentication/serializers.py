@@ -25,3 +25,22 @@ class UserSerializer(serializers.ModelSerializer):
             raise ValidationError({'username': 'Username has already been used'})
 
         return super().validate(attrs)
+
+    def update(self, instance, validated_data):
+        instance.email = validated_data.get('email', instance.email)
+        instance.username = validated_data.get('username', instance.username)
+
+        password = validated_data.get('password')
+        if password:
+            instance.set_password(password)
+
+        instance.save()
+        return instance
+
+    def create(self, validated_data):
+        password = validated_data.pop("password")
+        user = super().create(validated_data)
+        user.set_password(password)
+        user.save()
+
+        return user
