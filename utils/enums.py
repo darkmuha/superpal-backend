@@ -27,3 +27,11 @@ class Rank(models.TextChoices):
     EXEMPLAR = 6, "Exemplar"
     RESCUER = 7, "Rescuer"
     CHAMPION = 8, "Champion"
+
+
+class SuperPalWorkoutRequestStatus(models.TextChoices):
+    PENDING = 'Pending'
+    ACCEPTED = 'Accepted'
+    COMPLETED = 'Completed'
+    CANCELED = 'Canceled'
+    DELETED = 'Deleted'

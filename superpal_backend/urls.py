@@ -8,5 +8,6 @@ urlpatterns = [
     path('workouts/', include('workouts.urls')),
     path('trainings/', include('trainings.urls')),
     path('customers/', include('customers.urls')),
-    path('authentication/', include('authentication.urls'))
+    path('authentication/', include('authentication.urls')),
+    path('superpals/', include('superpals.urls'))
 ]

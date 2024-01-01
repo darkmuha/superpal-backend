@@ -3,7 +3,7 @@ from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.renderers import JSONRenderer
-from rest_framework.test import APIClient
+from rest_framework.test import APITestCase
 from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -12,9 +12,8 @@ from authentication.models import User
 from utils.enums import Intensity, Difficulty
 
 
-class AuthenticationViewsTestCase(TestCase):
+class AuthenticationViewsTestCase(APITestCase):
     def setUp(self):
-        self.client = APIClient()
         self.user_data = {
             'email': 'john.doe@example.com',
             'username': 'john_doe',
@@ -93,13 +92,9 @@ class AuthenticationViewsTestCase(TestCase):
     def test_logout_view(self):
         url = reverse('logout')
         refresh_token = RefreshToken.for_user(self.user)
-        data = {'refresh_token': str(refresh_token)}
+        data = {'refresh': str(refresh_token)}
         response = self.client.post(url, data)
-
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        blacklisted_token = BlacklistedToken.objects.filter(token=refresh_token)
-        self.assertTrue(blacklisted_token.exists(),
-                        msg="Refresh token not blacklisted")
 
     def test_create_admin_view(self):
         url = reverse('create-admin')

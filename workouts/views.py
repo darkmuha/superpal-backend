@@ -26,15 +26,19 @@ def workout_list(request):
         data = QueryDict(mutable=True)
         data.update(request.data)
         trainings_ids = data.pop('trainings', None)
+        if trainings_ids:
+            if isinstance(trainings_ids[0], list):
+                trainings_ids = trainings_ids[0]
 
         if trainings_ids is None:
             return Response(data="at least 1 training should be selected", status=status.HTTP_400_BAD_REQUEST)
 
         serializer = WorkoutSerializer(data=data)
         if serializer.is_valid():
+            trainings = [get_object_or_404(Training, pk=training) for training in trainings_ids]
+
             workout = serializer.save()
 
-            trainings = [get_object_or_404(Training, id=training) for training in trainings_ids]
             workout.trainings.set(trainings)
 
             return Response(data=serializer.data, status=status.HTTP_201_CREATED)
@@ -59,14 +63,19 @@ def workout_detail(request, workout_id):
         data.update(request.data)
         trainings_ids = data.pop('trainings', None)
 
+        if trainings_ids:
+            if isinstance(trainings_ids[0], list):
+                trainings_ids = trainings_ids[0]
+
         serializer = WorkoutSerializer(instance=workout, data=data, partial=True)
 
         if serializer.is_valid():
-            serializer.save()
 
             if trainings_ids:
                 trainings = [get_object_or_404(Training, id=training) for training in trainings_ids]
                 workout.trainings.set(trainings)
+
+            serializer.save()
 
             return Response(data=serializer.data, status=status.HTTP_200_OK)
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)

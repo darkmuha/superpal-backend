@@ -57,7 +57,7 @@ def logout_view(request):
     Logout view (adds token to blacklist)
     """
 
-    refresh_token = request.data.get('refresh_token')
+    refresh_token = request.data.get('refresh')
 
     if refresh_token:
         token = RefreshToken(refresh_token)
@@ -93,6 +93,7 @@ def get_routes(request):
             'authentication/register/',
             'authentication/token/',
             'authentication/token/refresh/',
+            'authentication/token/verify/',
             'authentication/create-admin/'
         ]
 

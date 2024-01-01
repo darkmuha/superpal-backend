@@ -27,7 +27,7 @@ class WorkoutViewsTestCase(TestCase):
             'rest_between_trainings': 120,
         }
         self.workout = Workout.objects.create(**self.workout_data)
-        self.workout.trainings.set([self.training])
+        self.workout.trainings.set([self.training.id])
         self.workout_url = reverse('workout-detail', args=[str(self.workout.id)])
 
     def test_workout_list(self):
@@ -41,8 +41,8 @@ class WorkoutViewsTestCase(TestCase):
         url = reverse('workout-list')
         data = self.workout_data
         data['name'] = 'Test Workout 1'
-        data['trainings'] = [self.training.id]
-
+        data['trainings'] = [str(self.training.id)]
+        
         response = self.client.post(url, data=data)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
