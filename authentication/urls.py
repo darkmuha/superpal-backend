@@ -1,4 +1,5 @@
-from django.urls import path
+from django.urls import path, include
+from django.contrib.auth import views as auth_views
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
 
 from authentication.views import get_routes, login_view, signup_view, logout_view, create_admin
@@ -11,5 +12,6 @@ urlpatterns = [
     path('login/', login_view, name='login'),  # login
     path('register/', signup_view, name='register'),  # create customer
     path('logout/', logout_view, name='logout'),  # logout
-    path('create-admin/', create_admin, name='create-admin')  # create admin user
+    path('create-admin/', create_admin, name='create-admin'),  # create admin user
+    path('password_reset/', include('django_rest_passwordreset.urls', namespace='password_reset')),
 ]
