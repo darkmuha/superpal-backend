@@ -6,6 +6,7 @@ from rest_framework import status
 
 from trainings.models import Training
 from trainings.serializers import TrainingSerializer
+from utils.custom_exceptions import InvalidInputFormatException
 from .models import Workout
 from .serializers import WorkoutSerializer
 
@@ -43,7 +44,7 @@ def workout_list(request):
 
             return Response(data=serializer.data, status=status.HTTP_201_CREATED)
 
-        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        raise InvalidInputFormatException(serializer.errors.items())
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
@@ -78,7 +79,7 @@ def workout_detail(request, workout_id):
             serializer.save()
 
             return Response(data=serializer.data, status=status.HTTP_200_OK)
-        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        raise InvalidInputFormatException(serializer.errors.items())
 
     if request.method == 'DELETE':
         workout.delete()

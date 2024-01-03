@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from customers.serializers import CustomerSerializer
+from utils.custom_exceptions import InvalidInputFormatException
 from .models import User
 from .serializers import UserSerializer
 from .tokens import create_jwt_pair_for_user
@@ -48,7 +49,7 @@ def signup_view(request):
             serializer.save()
 
             return Response(data=serializer.data, status=status.HTTP_201_CREATED)
-        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        raise InvalidInputFormatException(serializer.errors.items())
 
 
 @api_view(['POST'])
@@ -81,7 +82,7 @@ def create_admin(request):
             serializer.save()
 
             return Response(data=serializer.data, status=status.HTTP_201_CREATED)
-        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        raise InvalidInputFormatException(serializer.errors.items())
 
 
 @api_view(['GET'])

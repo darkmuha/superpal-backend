@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from authentication.serializers import UserSerializer
+from utils.custom_exceptions import InvalidInputFormatException
 from .models import Customer
 
 
@@ -27,7 +28,7 @@ class CustomerSerializer(serializers.ModelSerializer):
         user_serializer = UserSerializer(data=user_data)
 
         if not user_serializer.is_valid():
-            raise serializers.ValidationError(user_serializer.errors)
+            raise InvalidInputFormatException(user_serializer.errors.items())
 
         user = user_serializer.save()
 
@@ -39,6 +40,7 @@ class CustomerSerializer(serializers.ModelSerializer):
         user_data = validated_data.pop('user', {})
         user_instance = instance.user
         user_serializer = UserSerializer(instance=user_instance, data=user_data, partial=True)
+
         if user_serializer.is_valid():
             user_serializer.save()
 

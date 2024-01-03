@@ -4,12 +4,13 @@ from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.hashers import check_password
 
+from utils.custom_exceptions import InvalidInputFormatException
 from .models import Customer
 from .serializers import CustomerSerializer, UserSerializer
 
 
 # Create your views here.
-@api_view(['GET', 'POST'])
+@api_view(['GET'])
 def customer_list(request):
     """
     List all customers(Temporary)
@@ -61,7 +62,7 @@ def customer_detail(request, customer_id):
 
                 user_serializer = UserSerializer(instance=user, data=data.get('user'), partial=True)
                 if not user_serializer.is_valid():
-                    return Response(data=user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                    raise InvalidInputFormatException(user_serializer.errors.items())
                 user_serializer.save()
 
             # Update customer and associated user with the modified serializer
@@ -69,7 +70,7 @@ def customer_detail(request, customer_id):
 
             return Response(data=customer_serializer.data, status=status.HTTP_200_OK)
 
-        return Response(data=customer_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        raise InvalidInputFormatException(customer_serializer.errors.items())
     elif request.method == 'DELETE':
         customer.delete()
 
