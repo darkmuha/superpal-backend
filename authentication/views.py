@@ -1,3 +1,5 @@
+import logging
+
 from django.contrib.auth import authenticate
 from django.http import QueryDict
 from rest_framework.decorators import api_view
@@ -7,13 +9,16 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from customers.serializers import CustomerSerializer
 from utils.custom_exceptions import InvalidInputFormatException
-from .models import User
+from utils.logger_decorator import log_handler_decorator
 from .serializers import UserSerializer
 from .tokens import create_jwt_pair_for_user
+
+logger = logging.getLogger(__name__)
 
 
 # Create your views here.
 @api_view(['POST'])
+@log_handler_decorator(logger)
 def login_view(request):
     """
     Login view
@@ -32,6 +37,7 @@ def login_view(request):
 
 
 @api_view(['POST'])
+@log_handler_decorator(logger)
 def signup_view(request):
     """
     Signup view (registers customer)
@@ -53,6 +59,7 @@ def signup_view(request):
 
 
 @api_view(['POST'])
+@log_handler_decorator(logger)
 def logout_view(request):
     """
     Logout view (adds token to blacklist)
@@ -69,6 +76,7 @@ def logout_view(request):
 
 
 @api_view(['POST'])
+@log_handler_decorator(logger)
 def create_admin(request):
     if request.method == 'POST':
         mutable_data = QueryDict(mutable=True)
@@ -86,6 +94,7 @@ def create_admin(request):
 
 
 @api_view(['GET'])
+@log_handler_decorator(logger)
 def get_routes(request):
     if request.method == 'GET':
         routes = [

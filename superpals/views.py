@@ -1,3 +1,5 @@
+import logging
+
 from django.db.models import Q
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -7,10 +9,14 @@ from django.shortcuts import get_object_or_404
 from .models import SuperPals, SuperPalWorkoutRequest
 from .serializers import SuperPalsSerializer, SuperPalWorkoutRequestSerializer
 from authentication.models import User
+from utils.logger_decorator import log_handler_decorator
+
+logger = logging.getLogger(__name__)
 
 
 # Create your views here.
 @api_view(['GET'])
+@log_handler_decorator(logger)
 def superpal_list_all(request):
     if request.method == 'GET':
         superpals = SuperPals.objects.all()
@@ -21,6 +27,7 @@ def superpal_list_all(request):
 
 
 @api_view(['GET'])
+@log_handler_decorator(logger)
 def superpal_list_user(request, user_id):
     user = get_object_or_404(User, pk=user_id)
 
@@ -33,6 +40,7 @@ def superpal_list_user(request, user_id):
 
 
 @api_view(['GET', 'DELETE'])
+@log_handler_decorator(logger)
 def superpal_detail(request, superpal_id):
     superpal = get_object_or_404(SuperPals, pk=superpal_id)
 
@@ -48,6 +56,7 @@ def superpal_detail(request, superpal_id):
 
 
 @api_view(['GET', 'POST'])
+@log_handler_decorator(logger)
 def workout_request_list(request):
     if request.method == 'GET':
         workout_requests = SuperPalWorkoutRequest.objects.all()
@@ -81,6 +90,7 @@ def workout_request_list(request):
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
+@log_handler_decorator(logger)
 def workout_request_detail(request, workout_request_id):
     workout_request = get_object_or_404(SuperPalWorkoutRequest, pk=workout_request_id)
     if request.method == 'GET':

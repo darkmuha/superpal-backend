@@ -1,3 +1,5 @@
+import logging
+
 from django.shortcuts import get_object_or_404
 
 from rest_framework.decorators import api_view
@@ -5,11 +7,15 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from utils.custom_exceptions import InvalidInputFormatException
+from utils.logger_decorator import log_handler_decorator
 from .serializers import TrainingSerializer
 from .models import Training
 
+logger = logging.getLogger(__name__)
+
 
 @api_view(['GET', 'POST'])
+@log_handler_decorator(logger)
 def training_list(request):
     """
     List of all workouts AND Create a new training
@@ -32,6 +38,7 @@ def training_list(request):
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
+@log_handler_decorator(logger)
 def training_detail(request, training_id):
     """
     GET, UPDATE or DELETE a training.
