@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
+from customers.models import Customer
 from .models import User
 
 
@@ -44,3 +46,16 @@ class UserSerializer(serializers.ModelSerializer):
         user.save()
 
         return user
+
+
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        print('hey')
+        token = super().get_token(user)
+
+        customer = getattr(user, 'customer', None)
+        if customer:
+            token['customer_id'] = str(customer.id)
+
+        return token

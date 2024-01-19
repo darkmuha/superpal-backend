@@ -1,10 +1,12 @@
 import logging
 
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.hashers import check_password
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from utils.custom_exceptions import InvalidInputFormatException
 from utils.logger_decorator import log_handler_decorator
@@ -30,6 +32,8 @@ def customer_list(request):
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 @log_handler_decorator(logger)
 def customer_detail(request, customer_id):
     """

@@ -22,11 +22,20 @@ def workout_list(request):
     List of all workouts AND Create a new workout
     """
     if request.method == 'GET':
+        intensity = request.query_params.get('intensity', None)
+        difficulty = request.query_params.get('difficulty', None)
+
         workouts = Workout.objects.all()
+
+        if intensity:
+            workouts = workouts.filter(intensity=intensity)
+        if difficulty:
+            workouts = workouts.filter(difficulty=difficulty)
 
         serializer = WorkoutSerializer(instance=workouts, many=True)
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
+
 
     elif request.method == 'POST':
         data = QueryDict(mutable=True)

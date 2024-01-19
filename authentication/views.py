@@ -6,17 +6,22 @@ from rest_framework.decorators import api_view
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 from customers.serializers import CustomerSerializer
 from utils.custom_exceptions import InvalidInputFormatException
 from utils.logger_decorator import log_handler_decorator
-from .serializers import UserSerializer
+from .serializers import UserSerializer, MyTokenObtainPairSerializer
 from .tokens import create_jwt_pair_for_user
 
 logger = logging.getLogger(__name__)
 
 
-# Create your views here.
+# Create your views here
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
+
+
 @api_view(['POST'])
 @log_handler_decorator(logger)
 def login_view(request):
@@ -30,7 +35,9 @@ def login_view(request):
         user = authenticate(email=email, password=password)
 
         if user:
-            tokens = create_jwt_pair_for_user(user)
+            tokens = {
+                "tokens": create_jwt_pair_for_user(user)
+            }
 
             return Response(data=tokens, status=status.HTTP_200_OK)
         return Response(data="Invalid email or password", status=status.HTTP_403_FORBIDDEN)

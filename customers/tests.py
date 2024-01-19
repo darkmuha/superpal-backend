@@ -14,6 +14,7 @@ class CustomerViewsTestCase(TestCase):
         self.user = User.objects.create(email='john.doe@example.com', username='john_doe')
         self.user.set_password('somePassword123$')
         self.user.save()
+        
         self.customer_data = {
             'user': self.user,
             'first_name': 'John',

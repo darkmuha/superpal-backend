@@ -1,7 +1,8 @@
 from django.db.models import Q
 from rest_framework import serializers
+
+from customers.models import Customer
 from superpals.models import SuperPals, SuperPalWorkoutRequest
-from authentication.models import User
 from utils.enums import SuperPalWorkoutRequestStatus
 
 
@@ -13,9 +14,9 @@ class SuperPalsSerializer(serializers.ModelSerializer):
 
 class SuperPalWorkoutRequestSerializer(serializers.ModelSerializer):
     sender = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all())
+        queryset=Customer.objects.all())
     recipient = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all())
+        queryset=Customer.objects.all())
 
     class Meta:
         model = SuperPalWorkoutRequest
@@ -47,14 +48,14 @@ class SuperPalWorkoutRequestSerializer(serializers.ModelSerializer):
         representation = super().to_representation(instance)
         sender_representation = {
             'id': instance.sender.id,
-            'username': instance.sender.username,
-            'email': instance.sender.email,
+            'username': instance.sender.user.username,
+            'email': instance.sender.user.email,
         }
         representation['sender'] = sender_representation
         recipient_representation = {
             'id': instance.recipient.id,
-            'username': instance.recipient.username,
-            'email': instance.recipient.email,
+            'username': instance.recipient.user.username,
+            'email': instance.recipient.user.email,
         }
         representation['recipient'] = recipient_representation
 

@@ -3,13 +3,14 @@ import uuid
 from django.db import models
 
 from authentication.models import User
+from customers.models import Customer
 from utils.enums import SuperPalWorkoutRequestStatus
 
 
 class SuperPals(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='superpals_user')
-    pal = models.ForeignKey(User, on_delete=models.CASCADE, related_name='superpals_pal_user')
+    user = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='superpals_user')
+    pal = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='superpals_pal_user')
 
     def __str__(self):
         return f"{self.user}'s Super Pal: {self.pal}"
@@ -17,8 +18,8 @@ class SuperPals(models.Model):
 
 class SuperPalWorkoutRequest(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sender_requests')
-    recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='recipient_requests')
+    sender = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='sender_requests')
+    recipient = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='recipient_requests')
     workout_time = models.DateTimeField()
     status = models.CharField(max_length=10, choices=SuperPalWorkoutRequestStatus.choices,
                               default=SuperPalWorkoutRequestStatus.PENDING)

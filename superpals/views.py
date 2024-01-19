@@ -6,9 +6,9 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 
+from customers.models import Customer
 from .models import SuperPals, SuperPalWorkoutRequest
 from .serializers import SuperPalsSerializer, SuperPalWorkoutRequestSerializer
-from authentication.models import User
 from utils.logger_decorator import log_handler_decorator
 
 logger = logging.getLogger(__name__)
@@ -28,11 +28,11 @@ def superpal_list_all(request):
 
 @api_view(['GET'])
 @log_handler_decorator(logger)
-def superpal_list_user(request, user_id):
-    user = get_object_or_404(User, pk=user_id)
+def superpal_list_customer(request, customer_id):
+    customer = get_object_or_404(Customer, pk=customer_id)
 
     if request.method == 'GET':
-        superpals = SuperPals.objects.filter(Q(user=user) | Q(pal=user))
+        superpals = SuperPals.objects.filter(Q(user=customer) | Q(pal=customer))
 
         serializer = SuperPalsSerializer(instance=superpals, many=True)
 
@@ -55,9 +55,23 @@ def superpal_detail(request, superpal_id):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+@api_view(['GET'])
+@log_handler_decorator(logger)
+def workout_request_list_customer(request, customer_id):
+    print(customer_id)
+    customer = get_object_or_404(Customer, pk=customer_id)
+    print(customer)
+    if request.method == 'GET':
+        workout_request = SuperPalWorkoutRequest.objects.filter(Q(sender=customer) | Q(recipient=customer))
+
+        serializer = SuperPalWorkoutRequestSerializer(instance=workout_request, many=True)
+
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+
 @api_view(['GET', 'POST'])
 @log_handler_decorator(logger)
-def workout_request_list(request):
+def workout_request_list_all(request):
     if request.method == 'GET':
         workout_requests = SuperPalWorkoutRequest.objects.all()
 
@@ -72,8 +86,8 @@ def workout_request_list(request):
             return Response(data={'error': 'Both sender_id and recipient_id are required in the request data.'},
                             status=status.HTTP_400_BAD_REQUEST)
 
-        sender = get_object_or_404(User, pk=sender_id)
-        recipient = get_object_or_404(User, pk=recipient_id)
+        sender = get_object_or_404(Customer, pk=sender_id)
+        recipient = get_object_or_404(Customer, pk=recipient_id)
 
         request_data = {
             'sender': sender.id,

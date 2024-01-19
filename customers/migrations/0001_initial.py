@@ -5,10 +5,10 @@ import django.core.validators
 from django.db import migrations, models
 import django.db.models.deletion
 import uuid
+from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -28,17 +28,25 @@ class Migration(migrations.Migration):
                 ('profile_picture', models.CharField(blank=True, max_length=255, null=True)),
                 ('weight', models.DecimalField(decimal_places=2, max_digits=5)),
                 ('height', models.DecimalField(decimal_places=2, max_digits=5)),
-                ('age', models.PositiveIntegerField(validators=[django.core.validators.MaxValueValidator(100), django.core.validators.MinValueValidator(0)])),
+                ('age', models.PositiveIntegerField(validators=[django.core.validators.MaxValueValidator(100),
+                                                                django.core.validators.MinValueValidator(0)])),
                 ('workout_streak', models.IntegerField(default=0)),
-                ('workout_intensity', models.TextField(choices=[('Low', 'Low'), ('Medium', 'Medium'), ('High', 'High')])),
-                ('workout_difficulty', models.TextField(choices=[('Beginner', 'Beginner'), ('Intermediate', 'Intermediate'), ('Pro', 'Pro')])),
-                ('rank', models.IntegerField(choices=[('1', 'Warrior'), ('2', 'Guardian'), ('3', 'Defender'), ('4', 'Paladin'), ('5', 'Model'), ('6', 'Exemplar'), ('7', 'Rescuer'), ('8', 'Champion')], default='1')),
+                ('workout_intensity',
+                 models.TextField(choices=[('Low', 'Low'), ('Medium', 'Medium'), ('High', 'High')])),
+                ('workout_difficulty', models.TextField(
+                    choices=[('Beginner', 'Beginner'), ('Intermediate', 'Intermediate'), ('Pro', 'Pro')])),
+                ('rank', models.IntegerField(
+                    choices=[('1', 'Warrior'), ('2', 'Guardian'), ('3', 'Defender'), ('4', 'Paladin'), ('5', 'Model'),
+                             ('6', 'Exemplar'), ('7', 'Rescuer'), ('8', 'Champion')], default='1')),
                 ('current_gym', models.CharField(max_length=40)),
                 ('current_location', models.CharField(max_length=100)),
                 ('last_updated', models.DateTimeField(auto_now=True)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
-                ('workout_selected', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='workouts.workout')),
+                (
+                    'user',
+                    models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                ('workout_selected',
+                 models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='workouts.workout')),
             ],
         ),
         migrations.CreateModel(
