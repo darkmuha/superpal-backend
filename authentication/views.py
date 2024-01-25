@@ -2,6 +2,7 @@ import logging
 
 from django.contrib.auth import authenticate
 from django.http import QueryDict
+from django_rest_passwordreset.views import reset_password_confirm
 from rest_framework.decorators import api_view
 from rest_framework import status
 from rest_framework.response import Response
@@ -84,12 +85,32 @@ def logout_view(request):
 
 @api_view(['POST'])
 @log_handler_decorator(logger)
+def custom_password_reset_confirm(request):
+    if request.method == 'POST':
+
+        token = request.data.get('token', None)
+
+        if not token:
+            return Response(data='Token not provided', status=status.HTTP_400_BAD_REQUEST)
+
+        response = reset_password_confirm(request._request, token)
+
+        if response.status_code:
+            return Response(data='Token is correct', status=status.HTTP_200_OK)
+        else:
+            return Response(data='Invalid or expired token', status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+@log_handler_decorator(logger)
 def create_admin(request):
     if request.method == 'POST':
         mutable_data = QueryDict(mutable=True)
         mutable_data.update(request.data)
 
         mutable_data['is_admin'] = True
+        mutable_data['is_staff'] = True
+        mutable_data['is_superuser'] = True
 
         serializer = UserSerializer(data=mutable_data)
 

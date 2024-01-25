@@ -2,9 +2,11 @@ import logging
 
 from django.http import QueryDict
 from django.shortcuts import get_object_or_404
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from trainings.models import Training
 from utils.custom_exceptions import InvalidInputFormatException
@@ -16,6 +18,8 @@ logger = logging.getLogger(__name__)
 
 
 @api_view(['GET', 'POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 @log_handler_decorator(logger)
 def workout_list(request):
     """
@@ -62,6 +66,8 @@ def workout_list(request):
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 @log_handler_decorator(logger)
 def workout_detail(request, workout_id):
     """

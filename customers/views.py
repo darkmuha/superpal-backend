@@ -10,30 +10,36 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from utils.custom_exceptions import InvalidInputFormatException
 from utils.logger_decorator import log_handler_decorator
-from .models import Customer
-from .serializers import CustomerSerializer, UserSerializer
+from .models import Customer, Progress
+from .serializers import CustomerSerializer, UserSerializer, SortedCustomerSerializer, ProgressSerializer
 
 logger = logging.getLogger(__name__)
 
 
 # Create your views here.
 @api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 @log_handler_decorator(logger)
 def customer_list(request):
-    """
-    List all customers(Temporary)
-    """
-    if request.method == 'GET':
+    if not request.user.is_superuser and request.method == 'GET':
         customers = Customer.objects.all()
 
         serializer = CustomerSerializer(instance=customers, many=True)
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
+    if request.method == 'GET':
+        customers = Customer.objects.all().order_by('-workout_streak')[:5]
+
+        serializer = SortedCustomerSerializer(instance=customers, many=True)
+
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
 
 @api_view(['GET', 'PUT', 'DELETE'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([IsAuthenticated])
+@authentication_classes([])
+@permission_classes([])
 @log_handler_decorator(logger)
 def customer_detail(request, customer_id):
     """
@@ -86,3 +92,29 @@ def customer_detail(request, customer_id):
         customer.delete()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['GET', 'POST'])
+@authentication_classes([])
+@permission_classes([])
+@log_handler_decorator(logger)
+def progress_detail(request, customer_id):
+    customer = get_object_or_404(Customer, id=customer_id)
+
+    if request.method == 'GET':
+        progress_instances = Progress.objects.filter(user=customer).order_by('taken_at')
+        serializer = ProgressSerializer(instance=progress_instances, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET', 'POST'])
+@authentication_classes([])
+@permission_classes([])
+@log_handler_decorator(logger)
+def progress_list(request):
+    if request.method == 'POST':
+        serializer = ProgressSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

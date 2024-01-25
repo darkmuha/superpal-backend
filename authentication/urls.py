@@ -1,7 +1,8 @@
 from django.urls import path, include
 from rest_framework_simplejwt.views import TokenRefreshView, TokenVerifyView
 
-from authentication.views import get_routes, login_view, signup_view, logout_view, create_admin
+from authentication.views import get_routes, login_view, signup_view, logout_view, create_admin, \
+    custom_password_reset_confirm
 from .views import MyTokenObtainPairView
 
 urlpatterns = [
@@ -14,4 +15,6 @@ urlpatterns = [
     path('logout/', logout_view, name='logout'),  # logout
     path('create-admin/', create_admin, name='create-admin'),  # create admin user
     path('password_reset/', include('django_rest_passwordreset.urls', namespace='password_reset')),
+    path('password_reset/confirm-token/', custom_password_reset_confirm, name='password_reset_confirm'),
+
 ]

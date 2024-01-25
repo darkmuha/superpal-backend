@@ -33,7 +33,7 @@ class SuperPalWorkoutRequest(models.Model):
 
         # Define the allowed status transitions
         allowed_transitions = {
-            'Pending': ['Accepted', 'Canceled'],
+            'Pending': ['Accepted', 'Canceled', 'Declined'],
             'Accepted': ['Completed', 'Canceled'],
         }
 

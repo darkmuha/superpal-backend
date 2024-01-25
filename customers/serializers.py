@@ -2,11 +2,12 @@ from rest_framework import serializers
 
 from authentication.serializers import UserSerializer
 from utils.custom_exceptions import InvalidInputFormatException
-from .models import Customer
+from .models import Customer, Progress
 
 
 class CustomerSerializer(serializers.ModelSerializer):
     user = UserSerializer()
+    rank_named = serializers.CharField(source='get_rank_display', read_only=True)
 
     class Meta:
         model = Customer
@@ -47,3 +48,17 @@ class CustomerSerializer(serializers.ModelSerializer):
         super().update(instance, validated_data)
 
         return instance
+
+
+class SortedCustomerSerializer(serializers.ModelSerializer):
+    rank = serializers.CharField(source='get_rank_display', read_only=True)
+
+    class Meta:
+        model = Customer
+        fields = ['id', 'first_name', 'age', 'workout_streak', 'rank', 'profile_picture', 'current_gym', 'birthdate']
+
+
+class ProgressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Progress
+        fields = '__all__'

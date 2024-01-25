@@ -1,4 +1,5 @@
 import uuid
+from datetime import date, datetime
 
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -6,6 +7,11 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from utils.enums import SexType, Intensity, Difficulty, Rank
 from workouts.models import Workout, Training
 from authentication.models import User
+
+
+def validate_birthdate(value):
+    if value < date(1900, 1, 1):
+        raise ValueError("Birthdate must be on or after January 1, 1900")
 
 
 # Create your models here.
@@ -18,11 +24,8 @@ class Customer(models.Model):
     profile_picture = models.CharField(max_length=255, null=True, blank=True)
     weight = models.DecimalField(max_digits=5, decimal_places=2)
     height = models.DecimalField(max_digits=5, decimal_places=2)
-    age = models.PositiveIntegerField(
-        validators=[
-            MaxValueValidator(100),
-            MinValueValidator(0),
-        ]
+    birthdate = models.DateField(
+        validators=[validate_birthdate],
     )
     workout_selected = models.ForeignKey(Workout, on_delete=models.SET_NULL, null=True)
     workout_streak = models.IntegerField(default=0)
@@ -34,12 +37,20 @@ class Customer(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    @property
+    def age(self):
+        today = date.today()
+        birthdate = self.birthdate
+        age = today.year - birthdate.year - ((today.month, today.day) < (birthdate.month, birthdate.day))
+        return age
+
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
 
 class Progress(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(Customer, on_delete=models.CASCADE)
     progress_image = models.CharField(max_length=255)
     taken_at = models.DateTimeField(auto_now_add=True)
 

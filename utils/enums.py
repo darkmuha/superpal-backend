@@ -18,15 +18,15 @@ class Intensity(models.TextChoices):
     HIGH = "High"
 
 
-class Rank(models.TextChoices):
-    WARRIOR = 1, "Warrior"
-    GUARDIAN = 2, "Guardian"
-    DEFENDER = 3, "Defender"
-    PALADIN = 4, "Paladin"
-    MODEL = 5, "Model"
-    EXEMPLAR = 6, "Exemplar"
-    RESCUER = 7, "Rescuer"
-    CHAMPION = 8, "Champion"
+class Rank(models.IntegerChoices):
+    WARRIOR = 1
+    GUARDIAN = 2
+    DEFENDER = 3
+    PALADIN = 4
+    MODEL = 5
+    EXEMPLAR = 6
+    RESCUER = 7
+    CHAMPION = 8
 
 
 class SuperPalWorkoutRequestStatus(models.TextChoices):
@@ -34,4 +34,4 @@ class SuperPalWorkoutRequestStatus(models.TextChoices):
     ACCEPTED = 'Accepted'
     COMPLETED = 'Completed'
     CANCELED = 'Canceled'
-    DELETED = 'Deleted'
+    DECLINED = 'Declined'
